@@ -1,30 +1,70 @@
-"""Step Streaks — Starter
-
-You are analyzing a user's daily step counts.
-Implement without mutating inputs.
-"""
-from typing import List, Tuple
-
-
-def max_window_sum(values: List[int], k: int) -> Tuple[int, int] | None:
-    """Return (start_index, window_sum) of the largest sum among all length-k windows.
-
-    If k <= 0, raise ValueError. If k > len(values), return None.
+def max_window_sum(arr, k):
     """
-    raise NotImplementedError
-
-
-def count_goal_windows(values: List[int], k: int, target_avg: float) -> int:
-    """Return how many length-k windows have average >= target_avg.
-
-    If k <= 0, raise ValueError. If k > len(values), return 0.
+    Return (start_index, max_sum) of the contiguous subarray of length k
+    with the maximum sum. If len(arr) < k, return None.
     """
-    raise NotImplementedError
+    if k <= 0:
+        raise ValueError("Window size k must be positive")
+
+    n = len(arr)
+    if n < k:
+        return None
+
+    # initial window
+    window_sum = sum(arr[:k])
+    max_sum = window_sum
+    max_index = 0
+
+    # slide window
+    for i in range(k, n):
+        window_sum += arr[i] - arr[i - k]
+        if window_sum > max_sum:
+            max_sum = window_sum
+            max_index = i - k + 1
+
+    return (max_index, max_sum)
 
 
-def longest_rising_streak(values: List[int]) -> int:
-    """Return the length of the longest strictly increasing consecutive streak.
-
-    Empty list -> 0. Single element -> 1.
+def count_goal_windows(arr, k, goal):
     """
-    raise NotImplementedError
+    Count number of contiguous subarrays of length k
+    whose average is >= goal.
+    """
+    if k <= 0:
+        raise ValueError("Window size k must be positive")
+
+    n = len(arr)
+    if n < k:
+        return 0
+
+    count = 0
+    window_sum = sum(arr[:k])
+    if window_sum / k >= goal:
+        count += 1
+
+    for i in range(k, n):
+        window_sum += arr[i] - arr[i - k]
+        if window_sum / k >= goal:
+            count += 1
+
+    return count
+
+
+def longest_rising_streak(arr):
+    """
+    Return the length of the longest strictly increasing contiguous streak.
+    """
+    if not arr:
+        return 0
+
+    longest = 1
+    current = 1
+
+    for i in range(1, len(arr)):
+        if arr[i] > arr[i - 1]:
+            current += 1
+            longest = max(longest, current)
+        else:
+            current = 1
+
+    return longest
